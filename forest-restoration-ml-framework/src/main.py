@@ -52,7 +52,39 @@ def main() -> None:
 
     model, vectorizer, df_features, metrics = train_surrogate_model(df, base_profile, ECOLOGICAL_WEIGHTS)
     ranked = rank_species(df_features, model, vectorizer, user_profile, ECOLOGICAL_WEIGHTS, alpha=0.5)
+    
+    # Alpha ablation analysis
+    alpha_values = [0.0, 0.25, 0.5, 0.75, 1.0]
 
+    for alpha in alpha_values:
+        ranked_alpha = rank_species(
+            df_features,
+            model,
+            vectorizer,
+            user_profile,
+            ECOLOGICAL_WEIGHTS,
+            alpha=alpha,
+        )
+
+        top_alpha = ranked_alpha.head(10).copy()
+        top_alpha["alpha"] = alpha
+
+        selected_columns = [
+            "alpha",
+            "nome",
+            "nome_cientifico",
+            "grupo_sucessional_resumido",
+            "pontuacao_ecologica_final",
+            "pontuacao_ml_prevista",
+            "pontuacao_hibrida",
+        ]
+
+        top_alpha[selected_columns].to_csv(
+            output_dir / f"top_10_alpha_{str(alpha).replace('.', '_')}.csv",
+            index=False,
+            sep=";",
+            encoding="utf-8",
+        )
     top_species = ranked.head(10).copy()
     top_species["Uso Primário Registrado"] = top_species["reflorestamento_original"].apply(clean_display_text)
     top_species["Grupo Sucessional"] = top_species["grupo_sucessional_resumido"]
