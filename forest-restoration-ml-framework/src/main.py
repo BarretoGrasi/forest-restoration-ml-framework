@@ -1,7 +1,7 @@
 """Run complete forest restoration ML workflow.
 
 Example:
-    python src/main.py --data data/dataset_floresta2.csv --output-dir outputs/top_species.csv
+    python src/main.py --data data/dataset_floresta2.csv --output-dir outputs
 """
 
 from __future__ import annotations
